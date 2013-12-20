@@ -1,0 +1,69 @@
+#!/bin/bash
+
+usage() { echo "Usage: $0 [-k] [-v] [-d DST] [-t TOPDIR] [-o OPT...] SPEC SOURCE..."; }
+
+keep=0
+dstdir=$(pwd)
+verbosity="--quiet"
+opts=""
+
+while getopts "hkvo:t:" opt; do
+    case "${opt}" in
+        h)
+            usage
+            exit 0
+            ;;
+        k)
+            keep=1
+            ;;
+        v)
+            verbosity="-v"
+            ;;
+        d)
+            dstdir=${OPTARG}
+            ;;
+        t)
+            topdir=$(readlink -m ${OPTARG})
+            keep=1
+            ;;
+        o)
+            opts+=" ${OPTARG}"
+            ;;
+        *)
+            usage
+            exit 1
+    esac
+done
+
+if [ ${OPTIND} -gt $# ]; then
+    echo "$0: missing spec"
+    usage
+    exit 1
+fi
+
+shift $((OPTIND-1))
+specname=$1
+
+shift
+if [ $# -lt 1 ]; then
+    echo "$0: missing source"
+    usage
+    exit 1
+fi
+
+if [ -z ${topdir} ]; then
+    topdir=$(mktemp -d)
+fi
+
+mkdir -p $topdir/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+cp "$specname" $topdir/SPECS
+cp $* $topdir/SOURCES
+
+rpmbuild $verbosity $opts --define="_topdir $topdir" -bb $topdir/SPECS/$(basename "$specname")
+find $topdir/RPMS -name "*.rpm" -exec cp {} $dstdir \;
+
+if [ "x"$keep == "x0" ]; then
+    rm -rf $topdir
+else
+    echo "Keeping build directory: $topdir"
+fi
