@@ -27,6 +27,14 @@ mkdir -p %{buildroot}%{prefix}
 cp -R . %{buildroot}%{prefix}
 
 
+%post
+alternatives --install /etc/alternatives/jboss-as7 jboss-as7 %{prefix} 100
+
+
+%postun
+alternatives --remove jboss-as7 %{prefix}
+
+
 %files
 %defattr(-,root,root,0755)
 %{prefix}/appclient
