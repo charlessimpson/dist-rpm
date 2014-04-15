@@ -7,12 +7,12 @@ License:	ASL 2.0
 URL:		http://accumulo.apache.org/
 Source: 	http://www.apache.org/dyn/closer.cgi/accumulo/%{version}/accumulo-%{version}-bin.tar.gz
 
-BuildArch:  noarch
+BuildArch:	noarch
 Prefix:		/opt/accumulo-%{version}
-Requires:   hadoop
-Requires:   zookeeper >= 3
+Requires:	hadoop >= 2
+Requires:	zookeeper >= 3
 Requires:	java >= 1.6.0
-Provides:   accumulo
+Provides:	accumulo
 
 %define __jar_repack 0
 
@@ -51,7 +51,6 @@ alternatives --remove accumulo %{prefix}
 
 %{prefix}/bin
 %{prefix}/conf
-%{prefix}/examples
 %{prefix}/lib
 %{prefix}/logs
 %{prefix}/proxy
@@ -62,13 +61,27 @@ alternatives --remove accumulo %{prefix}
 %dir %{prefix}/lib/native
 %dir %{prefix}/lib/native/map
 
-%doc %{prefix}/docs
 %doc %{prefix}/CHANGES
 %doc %{prefix}/LICENSE
 %doc %{prefix}/NOTICE
 %doc %{prefix}/README
 
+# Included in doc subpackage
+%exclude %{prefix}/docs
+%exclude %{prefix}/examples
+
 # Included in -native package
 %exclude %{prefix}/lib/native/map/libNativeMap-Linux-amd64-64.so
 
 %changelog
+
+%package doc
+Group: Documentation
+Summary: Documentation Apache Accumulo
+
+%description doc
+Documentation and examples, including Javadoc, for Apache Accumulo.
+
+%files doc
+%doc %{prefix}/docs
+%doc %{prefix}/examples
