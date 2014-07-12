@@ -19,12 +19,15 @@ particular environment.  Don't need the documentation or the source code?  Just
 We chose the suffix `-dist` to distinguish packages built from their binary
 distributions from the actual packages provided by OS vendors.
 
-## -native Packages
+## -common Packages
 
-rpmbuild suffers a bug where noarch packages cannot have native
-subpackages.  This forces us to split specs for majority Java programs
-(noarch) with some JNI libraries (native) into two specs.  See
-<http://www.rpm.org/ticket/78>.
+Many large Java programs may have a few native components that could be package
+separately from their architecture independent parts. Rather than repackage the
+entire Java program, we package the noarch parts (the majority of the package)
+into a -common package, put the native components their own architecture
+dependent packages, then make the architecture dependent packages depend on the
+common packages. This allows someone to get both the native and common parts by
+installing a single RPM.
 
 ## RPATHs
 
