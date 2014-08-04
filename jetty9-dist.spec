@@ -8,10 +8,12 @@ URL:		http://www.eclipse.org/jetty/
 Source0:	jetty-distribution-%{version}.tar.gz
 Source1:	http://eclipse.org/downloads/download.php?file=/jetty/%{version}/dist/
 
-BuildArch:	noarch
 Prefix:		/opt/jetty-%{version}
 Requires:	java-1.7.0
 Provides:	jetty9
+
+ExclusiveArch:	x86_64
+ExclusiveOS:	Linux
 
 
 %description
@@ -61,8 +63,5 @@ alternatives --remove jetty-9 %{prefix}
 %doc %{prefix}/VERSION.txt
 %{prefix}/webapps
 
-# Included in -native package
-%exclude %{prefix}/lib/setuid/libsetuid-linux.so
-%exclude %{prefix}/lib/setuid/libsetuid-osx.so
 
 %changelog
