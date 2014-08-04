@@ -1,5 +1,5 @@
 Name:		jetty9-dist
-Version:	9.1.0.v20131115
+Version:	9.2.2.v20140723
 Release:	1%{?dist}
 Summary:	Jetty web server
 Group:		System Environment/Daemons
@@ -57,9 +57,11 @@ alternatives --remove jetty-9 %{prefix}
 %config %{prefix}/resources/log4j.properties
 %dir %{prefix}/start.d
 %config %{prefix}/start.d/http.ini
+%config %{prefix}/start.d/jsp.ini
+%config %{prefix}/start.d/jstl.ini
+%doc %{prefix}/start.d/README.TXT
 %config %{prefix}/start.ini
 %{prefix}/start.jar
-%doc %{prefix}/start.d/README.TXT
 %doc %{prefix}/VERSION.txt
 %{prefix}/webapps
 
