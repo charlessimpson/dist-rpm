@@ -5,8 +5,7 @@ Summary:	Maven software project management and comprehension tool
 Group:		Development/Tools
 License:	ASL 2.0
 URL:		http://maven.apache.org
-Source0:	apache-maven-3.1.1-bin.tar.gz
-Source1:	http://maven.apache.org/download.cgi
+Source: http://apache.org/dyn/closer.cgi/maven/maven-3/%{version}/binaries/apache-maven-%{version}-bin.tar.gz
 
 BuildArch:	noarch
 Prefix:		/opt/maven-%{version}
