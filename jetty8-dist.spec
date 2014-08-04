@@ -1,5 +1,5 @@
 Name:		jetty8-dist
-Version:	8.1.14.v20131031
+Version:	8.1.15.v20140411
 Release:	1%{?dist}
 Summary:	Jetty web server
 Group:		System Environment/Daemons
