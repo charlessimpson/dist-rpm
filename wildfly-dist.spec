@@ -1,5 +1,5 @@
 Name:		wildfly-dist
-Version:	8.2.0.Final
+Version:	9.0.0.Final
 Release:	1%{?dist}
 Summary:	WildFly Application Server
 Group:		System Environment/Daemons
@@ -84,6 +84,9 @@ alternatives --remove wildfly /opt/wildfly
 
 
 %changelog
+* Tue Jul 21 2015 Charles Simpson <csimpson@gmail.com>
+- bump to 9.0.0.Final
+
 * Tue Jul 21 2015 Charles Simpson <csimpson@gmail.com>
 - bump to 8.2.0.Final
 
