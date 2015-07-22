@@ -1,6 +1,6 @@
 Name:		wildfly-dist
 Version:	8.1.0.Final
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	WildFly Application Server
 Group:		System Environment/Daemons
 License:	LGPL 2.1
@@ -10,9 +10,9 @@ Source:		http://download.jboss.org/wildfly/%{version}/wildfly-%{version}.tar.gz
 ExclusiveArch:	x86_64 i686
 ExclusiveOS:	Linux
 
-Prefix:		/opt/wildfly-%{version}
+Requires(pre):	shadow-utils
 Requires:	java >= 1.7.0
-Requires:	wildfly-dist-common
+Requires:	/etc/init.d/functions
 Provides:	wildfly
 
 %undefine _missing_build_ids_terminate_build
@@ -23,56 +23,71 @@ Provides:	wildfly
 WildFly Application Server packaged from the binary distribution.
 
 
-%package common
-Summary:	WildFly Application Server common components
-BuildArch:	noarch
-
-
-%description common
-Architecture-independent components of WildFly.
-
-
 %prep
 %setup -q -n wildfly-%{version}
 
 
 %install
-mkdir -p %{buildroot}%{prefix}
-cp -R . %{buildroot}%{prefix}
+mkdir -p %{buildroot}/opt/wildfly
+cp -R . %{buildroot}/opt/wildfly
+mkdir -p %{buildroot}/etc/init.d
+ln -s /opt/wildfly/bin/init.d/wildfly-init-redhat.sh %{buildroot}/etc/init.d/wildfly
+mkdir -p %{buildroot}/etc/default
+cp bin/init.d/wildfly.conf %{buildroot}/etc/default/wildfly.conf
+
+# The init script doesn't default the user and crashes. Might as well set the
+# home dir since we know what it is.
+sed -e 's/# JBOSS_HOME/JBOSS_HOME/' -i %{buildroot}/etc/default/wildfly.conf
+sed -e 's/# JBOSS_USER/JBOSS_USER/' -i %{buildroot}/etc/default/wildfly.conf
+
+mkdir -p %{buildroot}/var/log/wildfly
+mkdir -p %{buildroot}/var/run/wildfly
 
 
-%post common
-alternatives --install /etc/alternatives/wildfly wildfly %{prefix} 100
+%pre
+getent group wildfly >/dev/null || groupadd -r wildfly
+getent passwd wildfly >/dev/null || \
+    useradd -r -g wildfly -d /opt/wildfly -s /sbin/nologin wildfly
 
 
-%postun common
-alternatives --remove wildfly %{prefix}
+%post
+alternatives --install /etc/alternatives/wildfly wildfly /opt/wildfly 100
+
+
+%postun
+alternatives --remove wildfly /opt/wildfly
 
 
 %files
 %defattr(-,root,root,0755)
-%{prefix}/modules/system/layers/base/org/hornetq/main/lib/%{_os}-%{_target_cpu}
 
 
-%files common
+%files
 %defattr(-,root,root,0755)
-%dir %{prefix}
-%{prefix}/appclient
-%{prefix}/bin
-%{prefix}/domain
-%{prefix}/jboss-modules.jar
-%{prefix}/modules
-%{prefix}/standalone
-%{prefix}/welcome-content
+%config /etc/default/wildfly.conf
+/etc/init.d/wildfly
+%dir /opt/wildfly
+/opt/wildfly/appclient
+/opt/wildfly/bin
+/opt/wildfly/domain
+/opt/wildfly/jboss-modules.jar
+/opt/wildfly/modules
+%attr(-,wildfly,wildfly) /opt/wildfly/standalone
+/opt/wildfly/welcome-content
+%dir /var/log/wildfly
+%dir /var/run/wildfly
 
-%exclude %{prefix}/modules/system/layers/base/org/hornetq/main/lib/linux-i686
-%exclude %{prefix}/modules/system/layers/base/org/hornetq/main/lib/linux-x86_64
-
-%doc %{prefix}/copyright.txt
-%doc %{prefix}/LICENSE.txt
-%doc %{prefix}/README.txt
-%doc %{prefix}/docs
+%doc /opt/wildfly/copyright.txt
+%doc /opt/wildfly/LICENSE.txt
+%doc /opt/wildfly/README.txt
+%doc /opt/wildfly/docs
 
 
 %changelog
+* Tue Jul 21 2015 Charles Simpson <csimpson@gmail.com>
+- eliminate split between wildfly-common and wildfly
+- change location to /opt/wildfly (see bin/init.d/wildfly.conf for default)
+- install init.d and configuration files
 
+* Sun Jul 13 2014 Charles Simpson <csimpson@gmail.com>
+- initial creation
