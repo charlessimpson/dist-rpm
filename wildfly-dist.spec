@@ -1,6 +1,6 @@
 Name:		wildfly-dist
-Version:	8.1.0.Final
-Release:	2%{?dist}
+Version:	8.2.0.Final
+Release:	1%{?dist}
 Summary:	WildFly Application Server
 Group:		System Environment/Daemons
 License:	LGPL 2.1
@@ -84,6 +84,9 @@ alternatives --remove wildfly /opt/wildfly
 
 
 %changelog
+* Tue Jul 21 2015 Charles Simpson <csimpson@gmail.com>
+- bump to 8.2.0.Final
+
 * Tue Jul 21 2015 Charles Simpson <csimpson@gmail.com>
 - eliminate split between wildfly-common and wildfly
 - change location to /opt/wildfly (see bin/init.d/wildfly.conf for default)
